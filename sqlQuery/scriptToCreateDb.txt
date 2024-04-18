@@ -1,0 +1,106 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Address`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Address` (
+  `address_id` INT NOT NULL,
+  `street_address` VARCHAR(45) NULL,
+  `city` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `postal_code` VARCHAR(45) NULL,
+  PRIMARY KEY (`address_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Customers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Customers` (
+  `customer_id` INT NOT NULL,
+  `first_name` VARCHAR(45) NULL,
+  `last_name` VARCHAR(45) NULL,
+  `email` VARCHAR(45) NULL,
+  `address_id` INT NULL,
+  PRIMARY KEY (`customer_id`),
+  INDEX `fk_address_id_idx` (`address_id` ASC) ,
+  CONSTRAINT `fk_address_id`
+    FOREIGN KEY (`address_id`)
+    REFERENCES `mydb`.`Address` (`address_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Orders`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Orders` (
+  `order_id` INT NOT NULL,
+  `customer_id` INT NULL,
+  `order_date` DATE NULL,
+  `total_amount` DECIMAL NULL,
+  `status` VARCHAR(45) NULL,
+  PRIMARY KEY (`order_id`),
+  INDEX `fk_customer_id_idx` (`customer_id` ASC) ,
+  CONSTRAINT `fk_customer_id`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES `mydb`.`Customers` (`customer_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Products`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Products` (
+  `product_id` INT NOT NULL,
+  `name` VARCHAR(45) NULL,
+  `description` TEXT NULL,
+  `price` DECIMAL NULL,
+  PRIMARY KEY (`product_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Order_Items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Order_Items` (
+  `order_item_id` INT NOT NULL,
+  `order_id` INT NULL,
+  `product_id` INT NULL,
+  `quantity` INT NULL,
+  PRIMARY KEY (`order_item_id`),
+  INDEX `fk_order_id_idx` (`order_id` ASC) ,
+  INDEX `fk_product_id_idx` (`product_id` ASC) ,
+  CONSTRAINT `fk_order_id`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `mydb`.`Orders` (`order_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_product_id`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `mydb`.`Products` (`product_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
